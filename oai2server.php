@@ -213,7 +213,6 @@ class OAI2Server {
                     } else {
                         if ($readings = $this->readResumptionToken($this->token_prefix.$this->args['resumptionToken'])) {
                             list($deliveredRecords, $metadataPrefix, $from, $until, $set) = $readings;
-                            $this->args['metadataPrefix'] = $metadataPrefix;
                         } else {
                             $this->errors[] = new OAI2Exception('badResumptionToken');
                         }
@@ -276,7 +275,7 @@ class OAI2Server {
                 if ($records_count - $deliveredRecords > $maxItems) {
 
                     $deliveredRecords +=  $maxItems;
-                    $restoken = $this->createResumptionToken($deliveredRecords);
+                    $restoken = $this->createResumptionToken($deliveredRecords, $metadataPrefix, $from, $until, $set);
 
                     $expirationDatetime = gmstrftime('%Y-%m-%dT%TZ', time()+$this->token_valid);
 
@@ -287,7 +286,7 @@ class OAI2Server {
                 }
 
                 if (isset($restoken)) {
-                    $this->response->createResumptionToken($restoken,$expirationDatetime,$records_count,$deliveredRecords);
+                    $this->response->createResumptionToken($restoken,$expirationDatetime,$records_count,$deliveredRecords,$maxItems);
                 }
 
             } catch (OAI2Exception $e) {
@@ -309,7 +308,7 @@ class OAI2Server {
         }
     }
 
-    private function createResumptionToken($delivered_records) {
+    private function createResumptionToken($delivered_records, $metadataPrefix, $from, $until, $set) {
 
         $token = time() + $this->token_valid;
 
@@ -318,26 +317,10 @@ class OAI2Server {
             exit("Cannot write. Writer permission needs to be changed.");
         }
         fputs($fp, "$delivered_records#");
-
-        if (isset($this->args['metadataPrefix']))
-          fputs($fp, "{$this->args['metadataPrefix']}");
-
-        fputs($fp, "#");
-
-        if (isset($this->args['from']))
-          fputs($fp, "{$this->args['from']}#");
-
-        fputs($fp, "#");
-
-        if (isset($this->args['until']))
-          fputs($fp, "{$this->args['until']}#");
-
-        fputs($fp, "#");
-
-        if (isset($this->args['set']))
-          fputs($fp, "{$this->args['set']}#");
-
-        fputs($fp, "#");
+        fputs($fp, "$metadataPrefix#");
+        fputs($fp, "$from#");
+        fputs($fp, "$until#");
+        fputs($fp, "$set#");
 
         fclose($fp);
         return $token;

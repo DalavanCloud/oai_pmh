@@ -93,13 +93,14 @@ class OAI2XMLResponse {
      * @param $expirationdatetime Type: string. A string representing time.
      * @param $num_rows           Type: integer. Number of records retrieved.
      * @param $cursor             Type: string. Cursor can be used for database to retrieve next time.
+     * @param $maxItems           Type: string. Max Items delivered in one response.
      */
-    function createResumptionToken($token, $expirationdatetime, $num_rows, $cursor=null) {
+    function createResumptionToken($token, $expirationdatetime, $num_rows, $cursor=null, $maxItems=null) {
         $resump_node = $this->addChild($this->verbNode,"resumptionToken",$token);
         if(isset($expirationdatetime)) {
             $resump_node->setAttribute("expirationDate",$expirationdatetime);
         }
         $resump_node->setAttribute("completeListSize",$num_rows);
-        $resump_node->setAttribute("cursor",$cursor);
+        $resump_node->setAttribute("cursor",$cursor - $maxItems);
     }
 }
