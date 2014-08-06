@@ -20,10 +20,6 @@ class OAI2XMLResponse {
         foreach($request_args as $key => $value) {
             $request->setAttribute($key,$value);
         }
-
-        if (!empty($this->verb)) {
-            $this->verbNode = $this->addChild($this->doc->documentElement,$this->verb);
-        }
     }
 
     /**
@@ -51,6 +47,10 @@ class OAI2XMLResponse {
      * \param $value Type: string. The content of appending node.
      */
     function addToVerbNode($nodeName, $value=null) {
+        if ( (!isset($this->verbNode)) && (!empty($this->verb)) ) {
+            $this->verbNode = $this->addChild($this->doc->documentElement,$this->verb);
+        }
+
         return $this->addChild($this->verbNode,$nodeName,$value);
     }
 
