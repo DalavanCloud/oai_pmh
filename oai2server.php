@@ -146,16 +146,13 @@ class OAI2Server {
 
     public function GetRecord() {
 
-        if (!isset($this->args['metadataPrefix'])) {
+        if ( (!isset($this->args['metadataPrefix'])) || (!isset($this->args['identifier'])) ) {
             $this->errors[] = new OAI2Exception('badArgument');
         } else {
             $metadataFormats = call_user_func($this->listMetadataFormatsCallback);
             if (!isset($metadataFormats[$this->args['metadataPrefix']])) {
                 $this->errors[] = new OAI2Exception('cannotDisseminateFormat');
             }
-        }
-        if (!isset($this->args['identifier'])) {
-            $this->errors[] = new OAI2Exception('badArgument');
         }
 
         if (empty($this->errors)) {
