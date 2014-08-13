@@ -15,7 +15,9 @@ class OAI2Server {
     private $token_valid = 86400;
     private $maxItems = 500;
 
-    function __construct($uri, $args, $identifyResponse, $callbacks) {
+    function __construct($uri, $args, $identifyResponse, $dateFormat, $callbacks) {
+
+        $this->dateFormat = $dateFormat;
 
         $this->uri = $uri;
 
@@ -67,6 +69,7 @@ class OAI2Server {
 
         if (count($this->args) > 0) {
             foreach($this->args as $key => $val) {
+                $this->args = [];
                 $this->errors[] = new OAI2Exception('badArgument');
             }
         } else {
@@ -80,7 +83,8 @@ class OAI2Server {
 
         foreach ($this->args as $argument => $value) {
             if ($argument != 'identifier') {
-                $this->errors[] = new OAI2Exception('badArgument');
+              $this->args = [];
+              $this->errors[] = new OAI2Exception('badArgument');
             }
         }
         if (isset($this->args['identifier'])) {
@@ -110,6 +114,7 @@ class OAI2Server {
 
         if (isset($this->args['resumptionToken'])) {
             if (count($this->args) > 1) {
+                $this->args = [];
                 $this->errors[] = new OAI2Exception('badArgument');
             } else {
                 if (time() > $this->args['resumptionToken']) {
@@ -147,6 +152,7 @@ class OAI2Server {
     public function GetRecord() {
 
         if ( (!isset($this->args['metadataPrefix'])) || (!isset($this->args['identifier'])) ) {
+            $this->args = [];
             $this->errors[] = new OAI2Exception('badArgument');
         } else {
             $metadataFormats = call_user_func($this->listMetadataFormatsCallback);
@@ -200,6 +206,7 @@ class OAI2Server {
 
         if (isset($this->args['resumptionToken'])) {
             if (count($this->args) > 1) {
+                $this->args = [];
                 $this->errors[] = new OAI2Exception('badArgument');
             } else {
                 if (time() > $this->args['resumptionToken']) {
@@ -218,6 +225,7 @@ class OAI2Server {
             }
         } else {
             if (!isset($this->args['metadataPrefix'])) {
+                $this->args = [];
                 $this->errors[] = new OAI2Exception('badArgument');
             } else {
                 $metadataFormats = call_user_func($this->listMetadataFormatsCallback);
@@ -227,11 +235,13 @@ class OAI2Server {
             }
             if (isset($this->args['from'])) {
                 if(!$this->checkDateFormat($this->args['from'])) {
+                    $this->args = [];
                     $this->errors[] = new OAI2Exception('badArgument');
                 }
             }
             if (isset($this->args['until'])) {
                 if(!$this->checkDateFormat($this->args['until'])) {
+                    $this->args = [];
                     $this->errors[] = new OAI2Exception('badArgument');
                 }
             }
@@ -241,6 +251,10 @@ class OAI2Server {
             try {
 
                 $records_count = call_user_func($this->listRecordsCallback, $metadataPrefix, $from, $until, $set, true);
+
+                if ($records_count == 0) {
+                  throw new OAI2Exception('noRecordsMatch');
+                }
 
                 $records = call_user_func($this->listRecordsCallback, $metadataPrefix, $from, $until, $set, false, $deliveredRecords, $maxItems);
 
@@ -349,13 +363,18 @@ class OAI2Server {
      * It needs to clean all time-zone informaion from time string and reformat it
      */
     private function checkDateFormat($date) {
-        $date = str_replace(array("T","Z")," ",$date);
-        $time_val = strtotime($date);
-        if(!$time_val) return false;
-        if(strstr($date,":")) {
-            return date("Y-m-d H:i:s",$time_val);
+        $formatted_date = date($this->dateFormat, strtotime($date));
+        if ($date != $formatted_date) {
+          return false;
         } else {
-            return date("Y-m-d",$time_val);
+          $date = str_replace(array("T","Z")," ",$date);
+          $time_val = strtotime($date);
+          if(!$time_val) return false;
+          if(strstr($date,":")) {
+              return date("Y-m-d H:i:s",$time_val);
+          } else {
+              return date("Y-m-d",$time_val);
+          }
         }
     }
 }

@@ -16,7 +16,11 @@ class OAI2XMLResponse {
         $this->doc->appendChild($oai_node);
 
         $request = $this->addChild($this->doc->documentElement,"request",$uri);
-        $request->setAttribute('verb', $this->verb);
+
+        if (!empty($this->verb)) {
+          $request->setAttribute('verb', $this->verb);
+        }
+
         foreach($request_args as $key => $value) {
             $request->setAttribute($key,$value);
         }
@@ -39,6 +43,13 @@ class OAI2XMLResponse {
     }
 
     /**
+     * Add Verb Node
+     */
+    function addVerbNode() {
+        $this->verbNode = $this->addChild($this->doc->documentElement,$this->verb);
+    }
+
+    /**
      * Add direct child nodes to verb node (OAI-PMH), e.g. response to ListMetadataFormats.
      * Different verbs can have different required child nodes.
      * \see create_record, create_header
@@ -48,7 +59,7 @@ class OAI2XMLResponse {
      */
     function addToVerbNode($nodeName, $value=null) {
         if ( (!isset($this->verbNode)) && (!empty($this->verb)) ) {
-            $this->verbNode = $this->addChild($this->doc->documentElement,$this->verb);
+            $this->addVerbNode();
         }
 
         return $this->addChild($this->verbNode,$nodeName,$value);
