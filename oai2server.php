@@ -315,7 +315,14 @@ class OAI2Server {
             $schema_node->setAttribute($name, $value);
         }
         foreach ($record['metadata']['fields'] as $name => $value) {
-            $this->response->addChild($schema_node, $name, $value);
+
+            if (is_array($value)) {
+              foreach($value as $key => $single_value) {
+                $this->response->addChild($schema_node, $name, $single_value);
+              }
+            } else {
+              $this->response->addChild($schema_node, $name, $value);
+            }
         }
     }
 
