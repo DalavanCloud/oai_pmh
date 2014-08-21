@@ -36,8 +36,12 @@ class OAI2XMLResponse {
      * @return DOMElement $added_node * The newly created node
      */
 
-    function addChild($mom_node,$name, $value='') {
-        $added_node = $this->doc->createElement($name,$value);
+    function addChild($mom_node, $name, $value='', $language='') {
+        $added_node = $this->doc->createElement($name);
+        if ($language) {
+          $added_node->setAttribute("xml:lang", $language);
+        }
+        $added_node->appendChild($this->doc->createTextNode($value));
         $added_node = $mom_node->appendChild($added_node);
         return $added_node;
     }

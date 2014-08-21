@@ -315,13 +315,19 @@ class OAI2Server {
             $schema_node->setAttribute($name, $value);
         }
         foreach ($record['metadata']['fields'] as $name => $value) {
-
-            if (is_array($value)) {
-              foreach($value as $key => $single_value) {
-                $this->response->addChild($schema_node, $name, $single_value);
-              }
+            if (!is_array($value)) {
+                $this->response->addChild($schema_node, $name, $value);
             } else {
-              $this->response->addChild($schema_node, $name, $value);
+                foreach ($value as $single_value) {
+                    if (!is_array($single_value)) {
+                        $this->response->addChild($schema_node, $name, $single_value);
+                    } else {
+                        $language = (!empty($single_value['language'])) ? $single_value['language'] : '';
+                        if (!empty($single_value['value'])) {
+                            $this->response->addChild($schema_node, $name, $single_value['value'], $language);
+                        }
+                    }
+                }
             }
         }
     }
