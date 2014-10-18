@@ -211,6 +211,8 @@ class OAI2ServerTest extends PHPUnit_Framework_TestCase {
                 <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
                 <dc:title>Testing records</dc:title>
                 <dc:author>Neis</dc:author>
+                <dc:subject xml:lang="es">Tema</dc:subject>
+                <dc:subject xml:lang="en">Subject</dc:subject>
                 </oai_dc:dc>
                 </metadata>
                 </record>
@@ -270,6 +272,8 @@ class OAI2ServerTest extends PHPUnit_Framework_TestCase {
                 <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
                 <dc:title>Testing records</dc:title>
                 <dc:author>Neis</dc:author>
+                <dc:subject xml:lang="es">Tema</dc:subject>
+                <dc:subject xml:lang="en">Subject</dc:subject>
                 </oai_dc:dc>
                 </metadata>
                 </record>

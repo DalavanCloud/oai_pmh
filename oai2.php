@@ -44,7 +44,11 @@ $example_record = array('identifier' => 'a.b.c',
                             ),
                             'fields' => array(
                                 'dc:title' => 'Testing records',
-                                'dc:author' => 'Neis'
+                                'dc:author' => 'Neis',
+                                'dc:subject' => array(
+                                  array('value' => 'Tema', 'language' => 'es'),
+                                  array('value' => 'Subject', 'language' => 'en')
+                                )
                             )
                        ));
 
@@ -55,7 +59,7 @@ if (!isset($args)) {
 if (!isset($uri)) {
     $uri = 'test.oai_pmh';
 }
-$oai2 = new OAI2Server($uri, $args, $identifyResponse,
+$oai2 = new OAI2Server($uri, $args, $identifyResponse, 'Y-m-d\TH:i:s\Z',
     array(
         'ListMetadataFormats' =>
         function($identifier = '') {
