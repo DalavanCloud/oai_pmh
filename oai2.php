@@ -1,5 +1,8 @@
 <?php
 
+// Date timezone
+date_default_timezone_set('UTC');
+
 require_once('oai2server.php');
 
 /**
